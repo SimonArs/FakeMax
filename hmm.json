@@ -1,0 +1,32 @@
+{
+	"dependencies": [
+		{
+			"name": "lime",
+			"type": "git",
+			"ref": "f93e907c44b4dfd0fe08931744517bfa84ef7b35",
+			"url": "https://github.com/ShadowEngineTeam/lime"
+		},
+		{
+			"name": "openfl",
+			"type": "git",
+			"ref": "5d33fb36dce7a82ed5782a60c0c24640b7f81591",
+			"url": "https://github.com/ShadowEngineTeam/openfl"
+		},
+		{
+			"name": "hxcpp",
+			"type": "git",
+			"ref": "991ca0900b43c0bc0cffc892868fae6d7b990c25",
+			"url": "https://github.com/ShadowEngineTeam/hxcpp"
+		},
+		{
+			"name": "format",
+			"type": "haxelib",
+			"version": "3.8.0"
+		},
+		{
+			"name": "hxp",
+			"type": "haxelib",
+			"version": "1.3.1"
+		}
+	]
+}
