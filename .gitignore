@@ -1,0 +1,9 @@
+bild/*
+.vscode/*
+.haxelib/
+.github/
+*.code-workspace
+vs_Community.exe
+.history
+.ionide
+*.DS_Store
