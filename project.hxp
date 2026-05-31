@@ -1,0 +1,133 @@
+//да я перелез с project.xml на project.hxp он намного удобнее и в нем больше простора для всяких приколов еу)
+import lime.tools.Asset;
+import sys.FileSystem;
+
+using StringTools;
+
+class Project extends lime.tools.HXProject
+{
+	public function new():Void {
+		super();
+
+		final isFinal:Bool = this.targetFlags.exists("final");
+		final bildDir:String = this.debug ? 'debug' : (isFinal ? 'final' : 'test');
+
+		final TITLE:String = "MAX";
+		final YOSIMON:String = "SimonArs";
+
+		this.app = {
+			main: "Main", file: TITLE, path: 'bild/$bildDir'
+		};
+
+		this.meta = {
+			title: TITLE, description: "Fuckin shit", packageName: "ru.oneme.app", version: "26.17.1",
+			company: YOSIMON, companyId: YOSIMON, companyUrl: "https://t.me/simonarsoff", buildNumber: "6712",
+			copyrightYears: "2025"
+		};
+
+		this.window = {
+			background: 0xFF000000, orientation: lime.tools.Orientation.LANDSCAPE, width: 1280, height: 720,
+			fps: 60, title: TITLE, hardware: false, vsync: false, allowShaders: false, antialiasing: 2,
+			resizable: this.platformType == DESKTOP, allowHighDPI: this.platformType == MOBILE
+		};
+
+		addHaxelib("openfl");
+
+		this.sources = ["source"];
+
+		this.libraries.push(new lime.tools.Library("", "ass", null, true, true, false, ""));
+		addAsketPath("ass", "ass", "ass", ["*"], null, true);
+
+		switch(this.target) {
+			case ANDROID:
+				adaptiveIcon = new lime.tools.AdaptiveIcon('ico/android/', true);
+
+				if(isFinal) {
+					this.architectures = [ARM64, ARMV7];
+					// this.keystore = new lime.tools.Keystore(); use ur keystore lol
+				} else {
+					this.architectures = [ARM64];
+					this.excludeArchitectures = [ARMV7];
+				}
+
+				//шняга для нормального билда
+				this.config.set("android.application.android:testOnly", "false");
+				this.config.set("android.application.android:usesCleartextTraffic", "false");
+
+			case IOS:
+				final sizes:Map<String, Int> = [
+					"20x20@1x" => 20,
+					"20x20@3x" => 60,
+					"29x29@1x" => 29,
+					"29x29@2x" => 58,
+					"29x29@3x" => 87,
+					"40x40@1x" => 40,
+					"40x40@2x" => 80,
+					"60x60@2x" => 120,
+					"60x60@3x" => 180,
+					"76x76@1x" => 76,
+					"76x76@2x" => 152,
+					"83.5x83.5@2x" => 167,
+					"1024x1024" => 1024
+				];
+
+				for (path => px in sizes)
+					addIco('ico/ios/SHIT-${path}.png', px);
+
+				addIco("ico/ios/SHIT-1024x1024.png"); 
+
+				this.meta.title = ~/ /ig.replace(TITLE, "\u2002");
+				this.config.set("ios.team-id", "W88UPTUJPT");
+
+			default:
+				addIco('ico/huyaks.png');
+		}
+
+		if(this.defines.exists("cpp")) {
+			setHaxedef("HXCPP_CHECK_POINTER");
+			setHaxedef("HXCPP_STACK_LINE");
+			setHaxedef("HXCPP_STACK_TRACE");
+			setHaxedef("HXCPP_CATCH_SEGV");
+		}
+
+		if(!this.debug) {
+			setHaxedef("NAPE_RELEASE_BUILD");
+			setHaxedef("HXCPP_OPTIMIZE");
+			setHaxedef("analyzer-optimize");
+		}
+	}
+
+	function addAsket(path:String, rename:String, lib:String, embed:Bool = false):Void {
+		final asket:Asset = new Asset(path, rename, null, embed);
+		asket.library = lib;
+		this.assets.push(asket);
+	}
+
+	function addAsketPath(path:String, rename:String, lib:String, ?include:Array<String>, ?exclude:Array<String>, embed:Bool = false):Void {
+		if(path == "") return;
+		if(include == null) include = [];
+		if(exclude == null) exclude = [];
+
+		var tPath:String = rename ?? path;
+		if(tPath != "") tPath += "/";
+
+		for(file in FileSystem.readDirectory(path)) {
+			if(FileSystem.isDirectory('$path/$file')) {
+				if(this.filter(file, ["*"], exclude))
+			  		addAsketPath('$path/$file', '$tPath$file', lib, include, exclude, embed);
+		  	} else {
+				if(this.filter(file, include, exclude))
+			  		addAsket('$path/$file', '$tPath$file', lib, embed);
+		  	}
+		}
+	}
+
+	inline function addIco(i:String, ?s:Int):Void
+		this.icons.push(new lime.tools.Icon(i, s));
+
+	inline function addHaxelib(n:String):Void
+		this.haxelibs.push(new hxp.Haxelib(n));
+
+	inline function setHaxedef(n:String, v:String = ""):Void
+		this.haxedefs.set(n, v);
+}
