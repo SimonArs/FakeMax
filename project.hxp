@@ -77,7 +77,6 @@ class Project extends lime.tools.HXProject
 				addIco("ico/ios/SHIT-1024x1024.png"); 
 
 				this.meta.title = ~/ /ig.replace(TITLE, "\u2002");
-				this.config.set("ios.team-id", "W88UPTUJPT");
 
 			default:
 				addIco('ico/huyaks.png');
