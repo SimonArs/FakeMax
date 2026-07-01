@@ -3,20 +3,20 @@
 		{
 			"name": "lime",
 			"type": "git",
-			"ref": "f93e907c44b4dfd0fe08931744517bfa84ef7b35",
-			"url": "https://github.com/ShadowEngineTeam/lime"
+			"ref": "122b651166c35f2be1e8a473a4e9f5580526e1db",
+			"url": "https://github.com/FunkinCrew/lime"
 		},
 		{
 			"name": "openfl",
 			"type": "git",
-			"ref": "5d33fb36dce7a82ed5782a60c0c24640b7f81591",
-			"url": "https://github.com/ShadowEngineTeam/openfl"
+			"ref": "e6f54038498ecf3ec2ab3e999bb824799fbdd4d0",
+			"url": "https://github.com/FunkinCrew/openfl"
 		},
 		{
 			"name": "hxcpp",
 			"type": "git",
-			"ref": "991ca0900b43c0bc0cffc892868fae6d7b990c25",
-			"url": "https://github.com/ShadowEngineTeam/hxcpp"
+			"ref": "2e969d0154ac536c1b5a5c89d2c2b73d7126bd2e",
+			"url": "https://github.com/FunkinCrew/hxcpp"
 		},
 		{
 			"name": "format",

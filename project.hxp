@@ -1,8 +1,7 @@
 //да я перелез с project.xml на project.hxp он намного удобнее и в нем больше простора для всяких приколов еу)
 import lime.tools.Asset;
+import haxe.io.Path;
 import sys.FileSystem;
-
-using StringTools;
 
 class Project extends lime.tools.HXProject
 {
@@ -12,22 +11,19 @@ class Project extends lime.tools.HXProject
 		final isFinal:Bool = this.targetFlags.exists("final");
 		final bildDir:String = this.debug ? 'debug' : (isFinal ? 'final' : 'test');
 
-		final TITLE:String = "MAX";
-		final YOSIMON:String = "SimonArs";
-
 		this.app = {
-			main: "Main", file: TITLE, path: 'bild/$bildDir'
+			main: "Main", file: "MAX", path: 'bild/$bildDir'
 		};
 
 		this.meta = {
-			title: TITLE, description: "Fuckin shit", packageName: "ru.oneme.app", version: "26.17.1",
-			company: YOSIMON, companyId: YOSIMON, companyUrl: "https://t.me/simonarsoff", buildNumber: "6712",
+			title: "MAX", description: "Fuckin shit", packageName: this.target == IOS ? "sru.oneme.app" : "ru.oneme.app", version: "26.17.1",
+			company: "SimonArs", companyId: "SimonArs", companyUrl: "https://t.me/simonarsoff", buildNumber: "6712",
 			copyrightYears: "2025"
 		};
 
 		this.window = {
 			background: 0xFF000000, orientation: lime.tools.Orientation.LANDSCAPE, width: 1280, height: 720,
-			fps: 60, title: TITLE, hardware: false, vsync: false, allowShaders: false, antialiasing: 2,
+			fps: 60, title: "MAX", hardware: true, vsync: false, allowShaders: false, antialiasing: 2,
 			resizable: this.platformType == DESKTOP, allowHighDPI: this.platformType == MOBILE
 		};
 
@@ -44,8 +40,45 @@ class Project extends lime.tools.HXProject
 
 				if(isFinal) {
 					this.architectures = [ARM64, ARMV7];
-					// this.keystore = new lime.tools.Keystore(); use ur keystore lol
+
+					final keystoreDir:String = Path.join([Sys.getCwd(), "keystore"]);
+					var keystorePath:String = Path.join([keystoreDir, "key.keystore"]);
+					var jsonPath:String = Path.join([keystoreDir, "keystore.json"]);
+
+					if (!FileSystem.exists(keystorePath)) {
+						trace('Where the fuck $keystorePath? Using dummy');
+						keystorePath = Path.join([keystoreDir, "dummy", "key.keystore"]);
+						jsonPath = Path.join([keystoreDir, "dummy", "keystore.json"]);
+					}
+
+					var rawJson:String = '';
+					try {
+						rawJson = sys.io.File.getContent(jsonPath);
+					}
+					catch (e:Dynamic) {
+						trace('Failed to read keystore.json bruh');
+						Sys.exit(1);
+						return;
+					}
+
+					var keyData:Dynamic;
+					try {
+						keyData = haxe.Json.parse(rawJson);
+					}
+					catch (e:Dynamic) {
+						trace("keystore.json file isn't valid JSON");
+						Sys.exit(1);
+						return;
+					}
+
+					if (keyData == null || !Reflect.hasField(keyData, "alias") || !Reflect.hasField(keyData, "storepass") || !Reflect.hasField(keyData, "keypass")) {
+						trace('keystore.json file missing required fields (alias, storepass, keypass)');
+						Sys.exit(1);
+					}
+
+					this.keystore = new lime.tools.Keystore(keystorePath, '${keyData.storepass}', '${keyData.alias}', '${keyData.keypass}');
 				} else {
+					// this.architectures = [ARM64, ARMV7];
 					this.architectures = [ARM64];
 					this.excludeArchitectures = [ARMV7];
 				}
@@ -72,14 +105,14 @@ class Project extends lime.tools.HXProject
 				];
 
 				for (path => px in sizes)
-					addIco('ico/ios/SHIT-${path}.png', px);
+					addIco('ico/ios/SHIT-$path', px);
 
-				addIco("ico/ios/SHIT-1024x1024.png"); 
+				addIco("ico/ios/SHIT-1024x1024"); 
 
-				this.meta.title = ~/ /ig.replace(TITLE, "\u2002");
+				this.config.set("ios.team-id", "W88UPTUJPT");
 
 			default:
-				addIco('ico/huyaks.png');
+				addIco('ico/huyaks');
 		}
 
 		if(this.defines.exists("cpp")) {
@@ -104,8 +137,8 @@ class Project extends lime.tools.HXProject
 
 	function addAsketPath(path:String, rename:String, lib:String, ?include:Array<String>, ?exclude:Array<String>, embed:Bool = false):Void {
 		if(path == "") return;
-		if(include == null) include = [];
-		if(exclude == null) exclude = [];
+		include ??= [];
+		exclude ??= [];
 
 		var tPath:String = rename ?? path;
 		if(tPath != "") tPath += "/";
@@ -122,7 +155,7 @@ class Project extends lime.tools.HXProject
 	}
 
 	inline function addIco(i:String, ?s:Int):Void
-		this.icons.push(new lime.tools.Icon(i, s));
+		this.icons.push(new lime.tools.Icon('$i.png', s));
 
 	inline function addHaxelib(n:String):Void
 		this.haxelibs.push(new hxp.Haxelib(n));

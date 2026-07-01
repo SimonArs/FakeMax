@@ -1,4 +1,5 @@
 bild/*
+dump/*
 .vscode/*
 .haxelib/
 .github/
@@ -7,3 +8,4 @@ vs_Community.exe
 .history
 .ionide
 *.DS_Store
+desktop.ini

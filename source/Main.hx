@@ -69,12 +69,15 @@ class Main extends Sprite
 
 		holder.addChild(text = new TextField());
 		text.autoSize = LEFT;
+
 		textFormat = new TextFormat("_sans", Std.int(Math.min(screenWidth, screenHeight) / 18), 0xFFFFFF, true, false, true);
 		text.defaultTextFormat = textFormat;
 		text.selectable = text.mouseEnabled = false;
 
 		final song:Song = songs[Std.random(songs.length)];
-		openfl.utils.Assets.getSound('ass:ass/${song.name}.ogg').play(song.offset);
+		final channel:openfl.media.SoundChannel = openfl.utils.Assets.getSound('ass:ass/${song.name}.ogg').play(song.offset);
+		channel?.addEventListener(Event.SOUND_COMPLETE, (_) -> #if desktop Sys.exit(0) #else Application.current.window.close() #end);
+
 		bpm = song.bpm;
 		beatInterval = 60 / bpm;
 
