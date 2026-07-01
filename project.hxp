@@ -16,8 +16,8 @@ class Project extends lime.tools.HXProject
 		};
 
 		this.meta = {
-			title: "MAX", description: "Fuckin shit", packageName: this.target == IOS ? "sru.oneme.app" : "ru.oneme.app", version: "26.17.1",
-			company: "SimonArs", companyId: "SimonArs", companyUrl: "https://t.me/simonarsoff", buildNumber: "6712",
+			title: "MAX", description: "Fuckin shit", packageName: this.target == IOS ? "sru.oneme.app" : "ru.oneme.app", version: "26.20.2",
+			company: "SimonArs", companyId: "SimonArs", companyUrl: "https://t.me/simonarsoff", buildNumber: "6758",
 			copyrightYears: "2025"
 		};
 
